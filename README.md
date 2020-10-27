@@ -1,2 +1,22 @@
-# florus
-Florus是一则应用于Scriptable App的Javascript脚本，它可以在iOS14小组件中实现显示日期、星期、农历、全年进度、天气、提醒、随机句子等。
+# Florus
+
+Florus is a piece of Javascript code applied to Scriptable App, displaying date, lunar date, weekday, year progress, weather, event reminder, and random motto, etc.
+
+Florus是一则应用于Scriptable App的Javascript脚本，它可以在iOS14小组件中实现：
+
+* 显示日期、星期、农历、全年进度
+* 显示指定经纬度的即时天气状况、温度
+* 显示预设的事项倒数天数
+* 随机从一言数据库中显示一句话及出处
+
+### 食用方法
+
+1. iOS14用户安装Scriptable App。
+2. 导入florus.js，或新建后将代码粘贴入。
+3. 添加小组件，选择Scriptable。
+4. 编辑小组件，脚本选择Florus。
+
+### 注意事项
+
+* 推荐使用中尺寸小组件。另外，作者机型为iPhoneXS，其他设备可自行适当调整字号大小。
+* 作者比较懒，更多好玩的功能我想到了再慢慢加。
