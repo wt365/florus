@@ -1,4 +1,4 @@
-// florus.js v4.5 by Tingyu
+;// florus.js v4.5 by Tingyu
 const CD=new Date(), WD=['日','一','二','三','四','五','六'];
 const Con={'CLEAR_DAY':'晴', 'CLEAR_NIGHT':'晴', 'PARTLY_CLOUDY_DAY':'多云', 'PARTLY_CLOUDY_NIGHT':'多云', 'CLOUDY':'阴', 'LIGHT_RAIN':'小雨', 'MODERATE_RAIN':'中雨', 'HEAVY_RAIN':'大雨', 'STORM_RAIN':'暴雨', 'LIGHT_SNOW':'小雪', 'MODERATE_SNOW':'中雪', 'HEAVY_SNOW':'大雪', 'STORM_SNOW':'暴雪', 'FOG':'雾', 'WIND':'大风', 'DUST':'浮尘', 'SAND':'沙尘', 'LIGHT_HAZE':'轻度雾霾', 'MODERATE_HAZE':'中度雾霾', 'HEAVY_HAZE':'重度雾霾',};  // weather text
 const lon=121.2345, lat=31.0567; // longitude & latitude // 请设置经纬度，用于显示天气
