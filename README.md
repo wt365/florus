@@ -12,7 +12,7 @@ Florus是一则应用于Scriptable App的Javascript脚本，它可以在iOS14小
 ### 食用方法
 
 1. iOS14用户安装Scriptable App。
-2. 导入florus.js，或新建后将代码粘贴入。
+2. 导入florus.js（或新建脚本后将代码粘贴入）。
 3. 添加小组件，选择Scriptable。
 4. 编辑小组件，脚本选择Florus。
 
