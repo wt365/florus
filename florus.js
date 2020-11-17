@@ -1,4 +1,4 @@
-;// florus.js v5.0 by Tingyu
+;// florus.js v5.0.1 by Tingyu
 
 // 设置区开始
 const loc='31.223502,121.44532'; // 请设置用于显示天气的位置 // 先纬度，后经度
@@ -15,7 +15,7 @@ const cs=0; // 配色方案 -> 0:黑色调 1:白色调 2:自动切换色调
 // 设置区结束
 
 const CD=new Date(), size=getSize(), sep=size?' · ':' ';
-let CS=[{b:'#1d1d1d',d:'#fff',w:'#fff59d',e:'#b3e5fc',f:['#b3e5fc','#ffccbc','#c8e6c9'],m:'#fff'},{b:'#eee',d:'#1d1d1d',w:'#424242',e:'#546e8a',f:['#546e7a','#ff5722','#4caf50'],m:'#424242'}];
+let CS=[{b:'#1d1d1d',d:'#fff',w:'#fff59d',e:'#b3e5fc',f:['#b3e5fc','#ffccbc','#c8e6c9'],m:'#fff'},{b:'#eee',d:'#1d1d1d',w:'#353535',e:'#4778a9',f:['#4778a9','#ff5722','#4caf50'],m:'#424242'}];
 CS.push(CD.getHours()>5&&CD.getHours()<18?CS[1]:CS[0]);
 const yola=await createWidget();
 Script.setWidget(yola);
