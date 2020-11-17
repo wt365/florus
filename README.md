@@ -1,6 +1,6 @@
 # Florus
 
-Florus is a piece of Javascript code applied to the *Scriptable* App, displaying date, lunar date, weekday, year progress, weather information, events reminder, realtime funds valuation, as well as random motto.
+Florus is a piece of Javascript code applied to the *Scriptable* App, displaying date, lunar date, weekday, year progress, weather information, events reminder, realtime funds valuation, as well as random motto, etc.
 
 ![](https://wt365.github.io/lib/florus/screenshot1.jpg)
 ![](https://wt365.github.io/lib/florus/screenshot2.jpg)
@@ -17,10 +17,10 @@ Florus是一则应用于*Scriptable* App的Javascript脚本，它可以在iOS14�
 ### 食用方法
 
 1. iOS14用户安装**Scriptable** App。
-2. 打开App，点击右上角**\+号**新建脚本，将florus.js中的代码复制后粘贴入。
+2. 打开App，点击右上角 `+号` 新建脚本，将florus.js中的代码复制后粘贴入。
 3. 将代码中设置区内的**位置纬度经度**、**提醒事项**、**基金功能开关及基金代码**、**配色方案**改成自己需要的。
-4. 点击左上角**Done**，保存脚本后可长按对其重命名（比如*Florus*）。
-5. 长按iOS14桌面空白处，点击左上角**\+号**添加小组件，选择Scriptable。建议中尺寸，其它尺寸亦可。
+4. 点击左上角 `Done` ，保存脚本后可长按对其重命名（比如*Florus*）。
+5. 长按iOS14桌面空白处，点击左上角 `+号` 添加小组件，选择Scriptable。建议中尺寸，其它尺寸亦可。
 6. 长按刚才添加的组件，点击**编辑小组件**，Script处选择*Florus*即可。
 
 ### 注意事项
