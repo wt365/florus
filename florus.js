@@ -1,4 +1,4 @@
-;// florus.js v5.0.1 by Tingyu
+;// florus.js v5.1 by Tingyu
 
 // 设置区开始
 const loc='31.223502,121.44532'; // 请设置用于显示天气的位置 // 先纬度，后经度
@@ -14,9 +14,9 @@ const Fcodes='004854,000294,150270'; // 请设置基金代码，用英文半角�
 const cs=0; // 配色方案 -> 0:黑色调 1:白色调 2:自动切换色调
 // 设置区结束
 
-const CD=new Date(), size=getSize(), sep=size?' · ':' ';
-let CS=[{b:'#1d1d1d',d:'#fff',w:'#fff59d',e:'#b3e5fc',f:['#b3e5fc','#ffccbc','#c8e6c9'],m:'#fff'},{b:'#eee',d:'#1d1d1d',w:'#353535',e:'#4778a9',f:['#4778a9','#ff5722','#4caf50'],m:'#424242'}];
-CS.push(CD.getHours()>5&&CD.getHours()<18?CS[1]:CS[0]);
+const CD=new Date(), dh=CD.getHours(), size=getSize(), sep=size?' · ':' ';
+let CS=[{b:'#1d1d1d',d:'#fff',w:'#fff59d',e:'#b3e5fc',f:['#b3e5fc','#ffccbc','#c8e6c9'],m:'#fff'},{b:'#f9f9f9',d:'#1d1d1d',w:'#353535',e:'#4778a9',f:['#4778a9','#ff5722','#4caf50'],m:'#424242'}];
+CS.push(dh>5&&dh<18?CS[1]:CS[0]);
 const yola=await createWidget();
 Script.setWidget(yola);
 Script.complete();
@@ -74,10 +74,16 @@ function getDatext () {
 	return da;
 }
 async function getWeather (loc) {
-	const req=new Request('http://wttr.in/'+loc+'?format=j1&lang=zh'), du=size?'度 ':'°', dux=size?'度':'';
+	const req=new Request('http://wttr.in/'+loc+'?format=j1&lang=zh-cn'), du=size?'° ':'°', dux=size?'°':'';
 	req.allowInsecureRequest=true;
-	const res=await req.loadJSON()||null, CC=res.current_condition[0]||null, W=res.weather[0]||null;
-	return CC.lang_zh[0].value+sep+CC.temp_C+du+' ('+(size?'最低':'')+(CC.temp_C<W.mintempC?CC.temp_C:W.mintempC)+dux+(size?' / ':'/')+(size?'最高':'')+(CC.temp_C>W.maxtempC?CC.temp_C:W.maxtempC)+dux+')';
+	const res=await req.loadJSON()||null, CC=res.current_condition[0]||null, W=res.weather[0]||null, cv=CC['lang_zh-cn'][0].value||'', n=Math.ceil((dh+1)/3), fv=n<8?W.hourly[n]['lang_zh-cn'][0].value||0:res.weather[1].hourly[0]['lang_zh-cn'][0].value||0;
+	return cv+sep+CC.temp_C+du+' ('+(size?'低':'')+(CC.temp_C<W.mintempC?CC.temp_C:W.mintempC)+dux+'/'+(size?'高':'')+(CC.temp_C>W.maxtempC?CC.temp_C:W.maxtempC)+dux+rainsnow(cv,fv)+')';
+}
+function rainsnow (c,f) {
+	const re=/[^雨雪]*/;
+	if (re.test(c)&&f.indexOf('雪')>-1) {return size?' · 3小时内或有❄️':'❄️';}
+	else if (re.test(c)&&f.indexOf('雨')>-1) {return size?' · 3小时内或有🌧️':'🌧️';}
+	else {return '';}
 }
 function procEvents (E) {
 	const max=size>1?6:size?3:4, xday=size?' · 还有':' ', today=size?' · 就是今天':'今天';
