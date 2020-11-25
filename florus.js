@@ -1,4 +1,4 @@
-;// florus.js v5.1.1 by Tingyu
+;// florus.js v5.1.2 by Tingyu
 
 // 设置区开始
 const loc='31.223502,121.44532'; // 请设置用于显示天气的位置 // 先纬度，后经度
@@ -77,12 +77,11 @@ async function getWeather (loc) {
 	const req=new Request('http://wttr.in/'+loc+'?format=j1&lang=zh'), du=size?'° ':'°', dux=size?'°':'';
 	req.allowInsecureRequest=true;
 	const res=await req.loadJSON()||null, CC=res.current_condition[0]||null, W=res.weather[0]||null, cv=CC['lang_zh'][0].value||'', n=Math.ceil((dh+1)/3), fv=n<8?W.hourly[n]['lang_zh'][0].value||0:res.weather[1].hourly[0]['lang_zh'][0].value||0;
-	return cv+sep+CC.temp_C+du+' ('+(size?'低':'')+(CC.temp_C<W.mintempC?CC.temp_C:W.mintempC)+dux+'/'+(size?'高':'')+(CC.temp_C>W.maxtempC?CC.temp_C:W.maxtempC)+dux+rainsnow(cv,fv)+')';
+	return cv+sep+CC.temp_C+du+' ('+(size?'低':'')+(CC.temp_C<W.mintempC?CC.temp_C:W.mintempC)+dux+'/'+(size?'高':'')+(CC.temp_C>W.maxtempC?CC.temp_C:W.maxtempC)+dux+rainsnow(fv)+')';
 }
-function rainsnow (c,f) {
-	const re=/[雨雪]/;
-	if (!re.test(c)&&f.indexOf('雪')>-1) {return size?' · 3小时内或有❄️':'❄️';}
-	else if (!re.test(c)&&f.indexOf('雨')>-1) {return size?' · 3小时内或有🌧️':'🌧️';}
+function rainsnow (x) {
+	if (x.indexOf('雪')>-1) {return size?' · 3小时内或有❄️':'❄️';}
+	else if (x.indexOf('雨')>-1) {return size?' · 3小时内或有🌧️':'🌧️';}
 	else {return '';}
 }
 function procEvents (E) {
