@@ -1,4 +1,4 @@
-;// florus.js v5.1 by Tingyu
+;// florus.js v5.1.1 by Tingyu
 
 // 设置区开始
 const loc='31.223502,121.44532'; // 请设置用于显示天气的位置 // 先纬度，后经度
@@ -11,7 +11,7 @@ const Events=[
 ];
 const FF=0; // 基金功能开关 -> 0:关闭，将正常显示提醒事项 1:打开，中小尺寸用基金实时估值替代提醒事项，大尺寸同时显示提醒事项和基金实时估值
 const Fcodes='004854,000294,150270'; // 请设置基金代码，用英文半角逗号隔开 // 中尺寸显示不超过三个，小尺寸（不显示一言）显示不超过四个，大尺寸显示不超过六个
-const cs=0; // 配色方案 -> 0:黑色调 1:白色调 2:自动切换色调
+const cs=2; // 配色方案 -> 0:黑色调 1:白色调 2:自动切换色调
 // 设置区结束
 
 const CD=new Date(), dh=CD.getHours(), size=getSize(), sep=size?' · ':' ';
@@ -74,15 +74,15 @@ function getDatext () {
 	return da;
 }
 async function getWeather (loc) {
-	const req=new Request('http://wttr.in/'+loc+'?format=j1&lang=zh-cn'), du=size?'° ':'°', dux=size?'°':'';
+	const req=new Request('http://wttr.in/'+loc+'?format=j1&lang=zh'), du=size?'° ':'°', dux=size?'°':'';
 	req.allowInsecureRequest=true;
-	const res=await req.loadJSON()||null, CC=res.current_condition[0]||null, W=res.weather[0]||null, cv=CC['lang_zh-cn'][0].value||'', n=Math.ceil((dh+1)/3), fv=n<8?W.hourly[n]['lang_zh-cn'][0].value||0:res.weather[1].hourly[0]['lang_zh-cn'][0].value||0;
+	const res=await req.loadJSON()||null, CC=res.current_condition[0]||null, W=res.weather[0]||null, cv=CC['lang_zh'][0].value||'', n=Math.ceil((dh+1)/3), fv=n<8?W.hourly[n]['lang_zh'][0].value||0:res.weather[1].hourly[0]['lang_zh'][0].value||0;
 	return cv+sep+CC.temp_C+du+' ('+(size?'低':'')+(CC.temp_C<W.mintempC?CC.temp_C:W.mintempC)+dux+'/'+(size?'高':'')+(CC.temp_C>W.maxtempC?CC.temp_C:W.maxtempC)+dux+rainsnow(cv,fv)+')';
 }
 function rainsnow (c,f) {
-	const re=/[^雨雪]*/;
-	if (re.test(c)&&f.indexOf('雪')>-1) {return size?' · 3小时内或有❄️':'❄️';}
-	else if (re.test(c)&&f.indexOf('雨')>-1) {return size?' · 3小时内或有🌧️':'🌧️';}
+	const re=/[雨雪]/;
+	if (!re.test(c)&&f.indexOf('雪')>-1) {return size?' · 3小时内或有❄️':'❄️';}
+	else if (!re.test(c)&&f.indexOf('雨')>-1) {return size?' · 3小时内或有🌧️':'🌧️';}
 	else {return '';}
 }
 function procEvents (E) {
