@@ -1,4 +1,4 @@
-;// florus.js v5.1.2 by Tingyu
+;// florus.js v5.2 by Tingyu
 
 // 设置区开始
 const loc='31.223502,121.44532'; // 请设置用于显示天气的位置 // 先纬度，后经度
@@ -9,8 +9,8 @@ const Events=[
 	['新年','2021-01-01'],
 	['东京奥运会','2021-07-23'],
 ];
-const FF=0; // 基金功能开关 -> 0:关闭，将正常显示提醒事项 1:打开，中小尺寸用基金实时估值替代提醒事项，大尺寸同时显示提醒事项和基金实时估值
-const Fcodes='004854,000294,150270'; // 请设置基金代码，用英文半角逗号隔开 // 中尺寸显示不超过三个，小尺寸（不显示一言）显示不超过四个，大尺寸显示不超过六个
+const FF=0; // 基金功能开关 -> 0:关闭（正常显示提醒事项） 1:基金模式 2:股票模式（中小尺寸用基金估值/股票行情替代提醒事项，大尺寸同时显示提醒事项和基金估值/股票行情）
+const Fcodes='000333,300750,600276'; // 请设置基金或股票代码，用英文半角逗号隔开 // 中尺寸显示不超过三个，小尺寸（不显示一言）显示不超过四个，大尺寸显示不超过六个
 const cs=2; // 配色方案 -> 0:黑色调 1:白色调 2:自动切换色调
 // 设置区结束
 
@@ -54,6 +54,16 @@ async function createWidget() {
 			fund.font=Font.lightSystemFont(11), fund.textColor=new Color(CS[cs].f[o[1]],0.9), fund.textOpacity=0.8;
 		}
 	}
+	// Stock
+	else if (FF==2) {
+		w.addSpacer(2);
+		const St=await getStocks();
+		for (let o of St) {
+			w.addSpacer(4);
+			let stock=w.addText(o[0]);
+			stock.font=Font.lightSystemFont(11), stock.textColor=new Color(CS[cs].f[o[1]],0.9), stock.textOpacity=0.8;
+		}
+	}
 	// Motto
 	if (size) {
 		w.addSpacer(6);
@@ -76,8 +86,9 @@ function getDatext () {
 async function getWeather (loc) {
 	const req=new Request('http://wttr.in/'+loc+'?format=j1&lang=zh'), du=size?'° ':'°', dux=size?'°':'';
 	req.allowInsecureRequest=true;
-	const res=await req.loadJSON()||null, CC=res.current_condition[0]||null, W=res.weather[0]||null, cv=CC['lang_zh'][0].value||'', n=Math.ceil((dh+1)/3), fv=n<8?W.hourly[n]['lang_zh'][0].value||0:res.weather[1].hourly[0]['lang_zh'][0].value||0;
-	return cv+sep+CC.temp_C+du+' ('+(size?'低':'')+(CC.temp_C<W.mintempC?CC.temp_C:W.mintempC)+dux+'/'+(size?'高':'')+(CC.temp_C>W.maxtempC?CC.temp_C:W.maxtempC)+dux+rainsnow(fv)+')';
+	const res=await req.loadJSON()||null, CC=res.current_condition[0]||null, W=res.weather[0]||null, cv=CC['lang_zh'][0].value||'', n=Math.ceil((dh+1)/3), fv=n<8?W.hourly[n]['lang_zh'][0].value||'':res.weather[1].hourly[0]['lang_zh'][0].value||'';
+	const t=+CC.temp_C, l=+W.mintempC, h=+W.maxtempC, ll=t<l?t:l, hh=t>h?t:h;
+	return cv+sep+t+du+' ('+(size?'低':'')+ll+dux+'/'+(size?'高':'')+hh+dux+rainsnow(fv)+')';
 }
 function rainsnow (x) {
 	if (x.indexOf('雪')>-1) {return size?' · 3小时内或有❄️':'❄️';}
@@ -107,6 +118,26 @@ async function getFunds () {
 		}
 	} catch (e) {Fx=[['暂时与交易所失去了联系',0]];}
 	return Fx;
+}
+async function getStocks () {
+	const max=size>1?6:size?3:4;
+	let Sx=[];
+	try {
+		const req=new Request('https://qt.gtimg.cn/q='+procStocks(Fcodes)), res=await req.loadString()||'';
+		if (res=='v_pv_none_match="1";') {Sx=[['无效的股票代码',0]];}
+		else {
+			let S=res.match(/="[^"]+";/g).map(x=>x.split('~'));
+			if (S.length>max) {S.length=max;}
+			for (let o of S) {
+				let g=o[5];
+				Sx.push([o[1]+' · '+o[3]+(size?' ('+(g>0?'+':'')+g+'%)':''), g>0?1:g<0?2:0]);
+			}
+		}
+	} catch (e) {Sx=[['暂时与交易所失去了联系',0]];}
+	return Sx;
+}
+function procStocks(x) {
+	return x.split(',').map(s=>/(60[013]|688)\d{3}/.test(s)?'s_sh'+s:/(00[023]|300)\d{3}/.test(s)?'s_sz'+s:'').join(',');
 }
 async function getMotto () {
 	const req=new Request('https://v1.hitokoto.cn/?encode=json'), res=await req.loadJSON()||null;
