@@ -1,4 +1,4 @@
-;// florus.js v5.2 by Tingyu
+;// florus.js v5.3 by Tingyu
 
 // 设置区开始
 const loc='31.223502,121.44532'; // 请设置用于显示天气的位置 // 先纬度，后经度
@@ -10,7 +10,7 @@ const Events=[
 	['东京奥运会','2021-07-23'],
 ];
 const FF=0; // 基金功能开关 -> 0:关闭（正常显示提醒事项） 1:基金模式 2:股票模式（中小尺寸用基金估值/股票行情替代提醒事项，大尺寸同时显示提醒事项和基金估值/股票行情）
-const Fcodes='000333,300750,600276'; // 请设置基金或股票代码，用英文半角逗号隔开 // 中尺寸显示不超过三个，小尺寸（不显示一言）显示不超过四个，大尺寸显示不超过六个
+const Fcodes='000333,300750,600276'; // 请设置基金或股票代码，用英文半角逗号隔开 // 小尺寸（不显示一言）显示不超过四个，中尺寸股票显示不超过六个、基金显示不超过三个，大尺寸显示不超过六个
 const cs=2; // 配色方案 -> 0:黑色调 1:白色调 2:自动切换色调
 // 设置区结束
 
@@ -33,7 +33,7 @@ async function createWidget() {
 	let wtext='';
 	try {wtext=await getWeather(loc);} catch (e) {wtext='暂时与气象卫星失去了联系';}
 	let weather=w.addText(wtext);
-	weather.font=Font.lightSystemFont(12), weather.textColor=new Color(CS[cs].w,0.9), weather.textOpacity=0.9;
+	weather.font=Font.lightSystemFont(12), weather.textColor=new Color(CS[cs].w,0.81);
 	// Events
 	if (FF==0||size>1) {
 		w.addSpacer(2);
@@ -41,7 +41,7 @@ async function createWidget() {
 		for (let o of Ev) {
 			w.addSpacer(4);
 			let event=w.addText(o);
-			event.font=Font.lightSystemFont(11), event.textColor=new Color(CS[cs].e,0.9), event.textOpacity=0.8;
+			event.font=Font.lightSystemFont(11), event.textColor=new Color(CS[cs].e,0.72);
 		}
 	}
 	// Funds
@@ -51,18 +51,35 @@ async function createWidget() {
 		for (let o of Fu) {
 			w.addSpacer(4);
 			let fund=w.addText(o[0]);
-			fund.font=Font.lightSystemFont(11), fund.textColor=new Color(CS[cs].f[o[1]],0.9), fund.textOpacity=0.8;
+			fund.font=Font.lightSystemFont(11), fund.textColor=new Color(CS[cs].f[o[1]],0.72);
 		}
 	}
 	// Stock
 	else if (FF==2) {
 		w.addSpacer(2);
 		const St=await getStocks();
-		for (let o of St) {
-			w.addSpacer(4);
-			let stock=w.addText(o[0]);
-			stock.font=Font.lightSystemFont(11), stock.textColor=new Color(CS[cs].f[o[1]],0.9), stock.textOpacity=0.8;
+		if (size==1&&St.length>3) {
+			let i=0;
+			while (i<St.length) {
+				w.addSpacer(4);
+				let stack=w.addStack();
+				for (let j=0; j<2; j++) {
+					if (St[i]) {
+						let stock=stack.addText(St[i][0]);
+						stock.font=Font.lightSystemFont(11), stock.textColor=new Color(CS[cs].f[St[i][1]],0.72);
+						if (i%2==0) {stack.addSpacer();}
+						i++;
+					} else {break;}
+				}
+			}
+		} else {
+			for (let o of St) {
+				w.addSpacer(4);
+				let stock=w.addText(o[0]);
+				stock.font=Font.lightSystemFont(11), stock.textColor=new Color(CS[cs].f[o[1]],0.72);
+			}
 		}
+		
 	}
 	// Motto
 	if (size) {
@@ -70,7 +87,7 @@ async function createWidget() {
 		let y='';
 		try {y=await getMotto();} catch (e) {y='“此时无声胜有声。” -- 在那个没有互联网的远古时代';}
 		let motto=w.addText(y);
-		motto.font=Font.lightSystemFont(10), motto.textColor=new Color(CS[cs].m,0.9), motto.textOpacity=0.8;
+		motto.font=Font.lightSystemFont(10), motto.textColor=new Color(CS[cs].m,0.72);
 	}
 	// return widget
 	return w;
@@ -120,7 +137,7 @@ async function getFunds () {
 	return Fx;
 }
 async function getStocks () {
-	const max=size>1?6:size?3:4;
+	const max=size?6:4;
 	let Sx=[];
 	try {
 		const req=new Request('https://qt.gtimg.cn/q='+procStocks(Fcodes)), res=await req.loadString()||'';
@@ -130,7 +147,7 @@ async function getStocks () {
 			if (S.length>max) {S.length=max;}
 			for (let o of S) {
 				let g=o[5];
-				Sx.push([o[1]+' · '+o[3]+(size?' ('+(g>0?'+':'')+g+'%)':''), g>0?1:g<0?2:0]);
+				Sx.push([(size?o[1]:o[1].substr(0,2))+' '+o[3]+' ('+(g>0?'+':'')+g+'%)', g>0?1:g<0?2:0]);
 			}
 		}
 	} catch (e) {Sx=[['暂时与交易所失去了联系',0]];}
