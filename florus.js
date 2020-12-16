@@ -1,16 +1,16 @@
-;// florus.js v5.3 by Tingyu
+;// florus.js v5.4 by Tingyu
 
 // 设置区开始
-const loc='31.223502,121.44532'; // 请设置用于显示天气的位置 // 先纬度，后经度
+const loc='31.223502,121.44532'; // 用于显示天气的位置，先纬度后经度
+const EM=0; // 提醒事项模式 -> 0:自编提醒事项 1:从日历中读取事项（需授权）
 const Events=[
-	// 提醒事项，可添加任意多条，无需按时间顺序，将会自动排序
-	// 中尺寸显示未来最近三项，小尺寸（不显示一言）显示未来最近四项，大尺寸显示未来最近六项
-	['参加比赛','2020-12-06'],
+	// 自编提醒事项，可按样例格式添加任意多条，无需按时间顺序，将会自动排序，并根据不同尺寸，显示未来最近几项
 	['新年','2021-01-01'],
-	['东京奥运会','2021-07-23'],
+	['月全食','2021-05-26'],
+	['奥运会','2021-07-23'],
 ];
 const FF=0; // 基金功能开关 -> 0:关闭（正常显示提醒事项） 1:基金模式 2:股票模式（中小尺寸用基金估值/股票行情替代提醒事项，大尺寸同时显示提醒事项和基金估值/股票行情）
-const Fcodes='000333,300750,600276'; // 请设置基金或股票代码，用英文半角逗号隔开 // 小尺寸（不显示一言）显示不超过四个，中尺寸股票显示不超过六个、基金显示不超过三个，大尺寸显示不超过六个
+const Fcodes='000333,300750,600276'; // 请设置基金或股票代码，用英文半角逗号隔开
 const cs=2; // 配色方案 -> 0:黑色调 1:白色调 2:自动切换色调
 // 设置区结束
 
@@ -23,8 +23,8 @@ Script.complete();
 // Functions
 function getSize () {return config.widgetFamily=='large'?2:config.widgetFamily=='medium'?1:0;}
 async function createWidget() {
-	let w= new ListWidget()
-	w.backgroundColor=new Color(CS[cs].b,0.9);
+	let w=new ListWidget()
+	w.backgroundColor=new Color(CS[cs].b,0.95);
 	// Date
 	let date=w.addText(getDatext());
 	date.font=Font.boldSystemFont(14), date.textColor=new Color(CS[cs].d);
@@ -37,7 +37,7 @@ async function createWidget() {
 	// Events
 	if (FF==0||size>1) {
 		w.addSpacer(2);
-		const Ev=procEvents(Events);
+		const Ev=EM?await procCal():procEvents(Events);
 		for (let o of Ev) {
 			w.addSpacer(4);
 			let event=w.addText(o);
@@ -111,6 +111,19 @@ function rainsnow (x) {
 	if (x.indexOf('雪')>-1) {return size?' · 3小时内或有❄️':'❄️';}
 	else if (x.indexOf('雨')>-1) {return size?' · 3小时内或有🌧️':'🌧️';}
 	else {return '';}
+}
+async function procCal () {
+	const ED=new Date(), max=size>1?6:size?3:4, xday=size?' · 还有':' ', today=size?' · 就是今天':'今天';
+	ED.setDate(ED.getDate()+90);
+	let Ex=[];
+	const E=await CalendarEvent.between(CD,ED,[]);
+	for (let o of E) {
+		if (!o.title.startsWith('Canceled:')) {
+			let diff=Math.ceil((new Date(o.startDate).getTime()-28800000-CD.getTime())/86400000);
+			if (diff>-1) {Ex.push(o.title+(diff>0?xday+diff+'天':today)); if (Ex.length==max) {break;}}
+		}
+	}
+	return Ex;
 }
 function procEvents (E) {
 	const max=size>1?6:size?3:4, xday=size?' · 还有':' ', today=size?' · 就是今天':'今天';
