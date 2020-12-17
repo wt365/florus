@@ -1,4 +1,4 @@
-;// florus.js v5.4 by Tingyu
+;// florus.js v5.4.1 by Tingyu
 
 // 设置区开始
 const loc='31.223502,121.44532'; // 用于显示天气的位置，先纬度后经度
@@ -79,7 +79,6 @@ async function createWidget() {
 				stock.font=Font.lightSystemFont(11), stock.textColor=new Color(CS[cs].f[o[1]],0.72);
 			}
 		}
-		
 	}
 	// Motto
 	if (size) {
@@ -113,24 +112,25 @@ function rainsnow (x) {
 	else {return '';}
 }
 async function procCal () {
-	const ED=new Date(), max=size>1?6:size?3:4, xday=size?' · 还有':' ', today=size?' · 就是今天':'今天';
+	const ED=new Date(), max=size>1?6:size?3:4, xday=size?' · 还有':' ', today=size?' · 今天':' 今天';
 	ED.setDate(ED.getDate()+90);
 	let Ex=[];
 	const E=await CalendarEvent.between(CD,ED,[]);
 	for (let o of E) {
 		if (!o.title.startsWith('Canceled:')) {
-			let diff=Math.ceil((new Date(o.startDate).getTime()-28800000-CD.getTime())/86400000);
-			if (diff>-1) {Ex.push(o.title+(diff>0?xday+diff+'天':today)); if (Ex.length==max) {break;}}
+			const t=new Date(o.startDate).getTime();
+			let diff=Math.ceil((t-(t-CD.getTimezoneOffset()*60000)%86400000-CD.getTime())/86400000);
+			Ex.push(o.title+(diff>0?xday+diff+'天':today)); if (Ex.length==max) {break;}
 		}
 	}
 	return Ex;
 }
 function procEvents (E) {
-	const max=size>1?6:size?3:4, xday=size?' · 还有':' ', today=size?' · 就是今天':'今天';
+	const max=size>1?6:size?3:4, xday=size?' · 还有':' ', today=size?' · 今天':' 今天';
 	E.sort((a,b)=>{return new Date(a[1]).getTime()-new Date(b[1]).getTime();});
 	let Ex=[];
 	for (let o of E) {
-		let diff=Math.ceil((new Date(o[1]).getTime()-28800000-CD.getTime())/86400000);
+		let diff=Math.ceil((new Date(o[1]).getTime()+CD.getTimezoneOffset()*60000-CD.getTime())/86400000);
 		if (diff>-1) {Ex.push(o[0]+(diff>0?xday+diff+'天':today)); if (Ex.length==max) {break;}}
 	}
 	return Ex;
