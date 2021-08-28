@@ -1,12 +1,12 @@
-;// florus.js v5.5.2 by Tingyu
+;// florus.js v5.5.3 by Tingyu
 
 // 设置区开始
 const loc='31.223502,121.44532'; // 用于显示天气的位置，先纬度后经度
 const EM=0; // 提醒事项模式 -> 0:自编提醒事项 1:从日历中读取事项（需授权）
 const Events=[
 	// 自编提醒事项，可按样例格式添加任意多条，无需按时间顺序，将会自动排序，并根据不同尺寸，显示未来最近几项
+	['国庆','2021-10-01'],
 	['新年','2022-01-01'],
-	['《四海》上映','2022-02-01'],
 	['冬奥会','2022-02-04'],
 ];
 const FF=0; // 基金功能开关 -> 0:关闭（正常显示提醒事项） 1:基金模式 2:股票模式（中小尺寸用基金估值/股票行情替代提醒事项，大尺寸同时显示提醒事项和基金估值/股票行情）
@@ -17,8 +17,8 @@ const cs=2; // 配色方案 -> 0:黑色调 1:白色调 2:自动切换色调
 const CD=new Date(), dh=CD.getHours(), size=getSize(), sep=size?' · ':' ';
 let CS=[{b:'#1d1d1d',d:'#fff',w:'#fff59d',e:'#b3e5fc',f:['#b3e5fc','#ffccbc','#c8e6c9'],m:'#fff'},{b:'#f9f9f9',d:'#1d1d1d',w:'#353535',e:'#4778a9',f:['#4778a9','#ff5722','#4caf50'],m:'#424242'}];
 CS.push(dh>5&&dh<18?CS[1]:CS[0]);
-const yola=await createWidget();
-Script.setWidget(yola);
+const yolanda=await createWidget();
+Script.setWidget(yolanda);
 Script.complete();
 // Functions
 function getSize () {return config.widgetFamily=='large'?2:config.widgetFamily=='medium'?1:0;}
@@ -112,7 +112,7 @@ function rainsnow (x) {
 	else {return '';}
 }
 async function procCal () {
-	const ED=new Date(), max=size>1?6:size?3:4, xday=size?' · 还有':' ', today=size?' · 今天':' 今天';
+	const ED=new Date(), max=size>1?6:size?3:4, xday=size?' · 还有':' ', tomo=' · 明天', today=' · 今天';
 	ED.setDate(ED.getDate()+90);
 	let Ex=[];
 	const E=await CalendarEvent.between(CD,ED,[]);
@@ -120,18 +120,18 @@ async function procCal () {
 		if (!o.title.startsWith('Canceled:')) {
 			const t=new Date(o.startDate).getTime();
 			let diff=Math.ceil((t-(t-CD.getTimezoneOffset()*60000)%86400000-CD.getTime())/86400000);
-			Ex.push(o.title+(diff>0?xday+diff+'天':today)); if (Ex.length==max) {break;}
+			Ex.push(o.title+(diff>1?xday+diff+'天':diff>0?tomo:today)); if (Ex.length==max) {break;}
 		}
 	}
 	return Ex;
 }
 function procEvents (E) {
-	const max=size>1?6:size?3:4, xday=size?' · 还有':' ', today=size?' · 今天':' 今天';
+	const max=size>1?6:size?3:4, xday=size?' · 还有':' ', tomo=' · 明天', today=' · 今天';
 	E.sort((a,b)=>{return new Date(a[1]).getTime()-new Date(b[1]).getTime();});
 	let Ex=[];
 	for (let o of E) {
 		let diff=Math.ceil((new Date(o[1]).getTime()+CD.getTimezoneOffset()*60000-CD.getTime())/86400000);
-		if (diff>-1) {Ex.push(o[0]+(diff>0?xday+diff+'天':today)); if (Ex.length==max) {break;}}
+		if (diff>-1) {Ex.push(o[0]+(diff>1?xday+diff+'天':diff>0?tomo:today)); if (Ex.length==max) {break;}}
 	}
 	return Ex;
 }
