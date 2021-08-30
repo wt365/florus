@@ -1,7 +1,7 @@
-;// florus.js v5.5.3 by Tingyu
+;// florus.js v5.6 by Tingyu
 
 // 设置区开始
-const loc='31.223502,121.44532'; // 用于显示天气的位置，先纬度后经度
+const lat=31.223502, lon=121.44532; // 用于显示天气的位置，lat为纬度lon为经度
 const EM=0; // 提醒事项模式 -> 0:自编提醒事项 1:从日历中读取事项（需授权）
 const Events=[
 	// 自编提醒事项，可按样例格式添加任意多条，无需按时间顺序，将会自动排序，并根据不同尺寸，显示未来最近几项
@@ -14,9 +14,9 @@ const Fcodes='000333,300750,600276'; // 请设置基金或股票代码，用英�
 const cs=2; // 配色方案 -> 0:黑色调 1:白色调 2:自动切换色调
 // 设置区结束
 
-const CD=new Date(), dh=CD.getHours(), size=getSize(), sep=size?' · ':' ';
+const CD=new Date(), dm=CD.getHours()*100+CD.getMinutes(), ly=CD.getFullYear()%4?0:1, D=getD(), loc=lat+'+'+lon, ST=getST(), size=getSize(), sep=size?' · ':' ';
 let CS=[{b:'#1d1d1d',d:'#fff',w:'#fff59d',e:'#b3e5fc',f:['#b3e5fc','#ffccbc','#c8e6c9'],m:'#fff'},{b:'#f9f9f9',d:'#1d1d1d',w:'#353535',e:'#4778a9',f:['#4778a9','#ff5722','#4caf50'],m:'#424242'}];
-CS.push(dh>5&&dh<18?CS[1]:CS[0]);
+CS.push(dm>ST[0]-1&&dm<ST[1]?CS[1]:CS[0]);
 const yolanda=await createWidget();
 Script.setWidget(yolanda);
 Script.complete();
@@ -95,14 +95,13 @@ function getDatext () {
 	let DF=new DateFormatter();
 	DF.dateFormat='M月d日'; 
 	let da=DF.string(CD)+sep+'周'+['日','一','二','三','四','五','六'][CD.getDay()];
-	DF.dateFormat='D';
-	if (size) {da+=sep+lunar(DF.string(CD))+sep+'全年'+Math.floor(DF.string(CD)/(365+(CD.getYear()%4?0:1))*100)+'%';}
+	if (size) {da+=sep+lunar(D)+sep+'全年'+Math.floor(D/(365+ly)*100)+'%';}
 	return da;
 }
 async function getWeather (loc) {
 	const req=new Request('http://wttr.in/'+loc+'?format=j1&lang=zh'), du=size?'° ':'°', dux=size?'°':'';
 	req.allowInsecureRequest=true;
-	const res=await req.loadJSON()||null, CC=res.current_condition[0]||null, W=res.weather[0]||null, cv=CC['lang_zh'][0].value||'', n=Math.ceil((dh+1)/3), fv=n<8?W.hourly[n]['lang_zh'][0].value||'':res.weather[1].hourly[0]['lang_zh'][0].value||'';
+	const res=await req.loadJSON()||null, CC=res.current_condition[0]||null, W=res.weather[0]||null, cv=CC['lang_zh'][0].value||'', n=Math.ceil((CD.getHours()+1)/3), fv=n<8?W.hourly[n]['lang_zh'][0].value||'':res.weather[1].hourly[0]['lang_zh'][0].value||'';
 	const t=+CC.temp_C, l=+W.mintempC, h=+W.maxtempC, ll=t<l?t:l, hh=t>h?t:h;
 	return cv+sep+t+du+' ('+(size?'低':'')+ll+dux+'/'+(size?'高':'')+hh+dux+rainsnow(fv)+')';
 }
@@ -112,7 +111,7 @@ function rainsnow (x) {
 	else {return '';}
 }
 async function procCal () {
-	const ED=new Date(), max=size>1?6:size?3:4, xday=size?' · 还有':' ', tomo=' · 明天', today=' · 今天';
+	const ED=new Date(), max=size>1?6:size?3:4, xday=' · '+(size?'还有':''), tomo=' · '+(size?'就是明天':'明天'), today=' · '+(size?'就是今天':'今天');
 	ED.setDate(ED.getDate()+90);
 	let Ex=[];
 	const E=await CalendarEvent.between(CD,ED,[]);
@@ -126,8 +125,8 @@ async function procCal () {
 	return Ex;
 }
 function procEvents (E) {
-	const max=size>1?6:size?3:4, xday=size?' · 还有':' ', tomo=' · 明天', today=' · 今天';
-	E.sort((a,b)=>{return new Date(a[1]).getTime()-new Date(b[1]).getTime();});
+	const max=size>1?6:size?3:4, xday=' · '+(size?'还有':''), tomo=' · '+(size?'就是明天':'明天'), today=' · '+(size?'就是今天':'今天');
+	E.sort((a,b)=>new Date(a[1]).getTime()-new Date(b[1]).getTime());
 	let Ex=[];
 	for (let o of E) {
 		let diff=Math.ceil((new Date(o[1]).getTime()+CD.getTimezoneOffset()*60000-CD.getTime())/86400000);
@@ -173,6 +172,11 @@ async function getMotto () {
 	const req=new Request('https://v1.hitokoto.cn/?encode=json'), res=await req.loadJSON()||null;
 	return '“'+res.hitokoto+'” -- '+res.from;
 } 
+function getD () {const a=new Date(CD.getFullYear(),CD.getMonth(),CD.getDate()), b=new Date(CD.getFullYear(),0,0); return (a-b)/86400000;}
+function getST () {
+	const fi=Math.asin(Math.sin((D-ly-80)*2*Math.PI/(ly+365))*0.397682), th=Math.asin(Math.tan(lat*Math.PI/180)*Math.tan(fi)), a=th*12/Math.PI, b=(lon-120)/15;
+	return [Math.trunc(6-a-b)*100+Math.round((6-a-b)%1*60), Math.trunc(18+a-b)*100+Math.round((18+a-b)%1*60)];
+}
 function lunar (D) {
 	// 农历已支持到2022年底，到了2023年我再更新一下
 	const y=CD.getFullYear(), L={'2021': [-17,12,42,71,101,131,160,190,219,249,278,308,337], '2022': [-28,2,31,61,90,120,149,179,209,238,268,297,327,356],}, Lx={'2021': ['冬','腊','正','二','三','四','五','六','七','八','九','十','冬'], '2022': ['冬','腊','正','二','三','四','五','六','七','八','九','十','冬','腊'],};
