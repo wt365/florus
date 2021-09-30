@@ -1,16 +1,16 @@
-;// florus.js v5.6 by Tingyu
+;// florus.js v5.6.1 by Tingyu
 
 // 设置区开始
 const lat=31.223502, lon=121.44532; // 用于显示天气的位置，lat为纬度lon为经度
 const EM=0; // 提醒事项模式 -> 0:自编提醒事项 1:从日历中读取事项（需授权）
 const Events=[
 	// 自编提醒事项，可按样例格式添加任意多条，无需按时间顺序，将会自动排序，并根据不同尺寸，显示未来最近几项
-	['国庆','2021-10-01'],
 	['新年','2022-01-01'],
+	['春节','2022-02-01'],
 	['冬奥会','2022-02-04'],
 ];
 const FF=0; // 基金功能开关 -> 0:关闭（正常显示提醒事项） 1:基金模式 2:股票模式（中小尺寸用基金估值/股票行情替代提醒事项，大尺寸同时显示提醒事项和基金估值/股票行情）
-const Fcodes='000333,300750,600276'; // 请设置基金或股票代码，用英文半角逗号隔开
+const Fcodes='300750,002594,600276'; // 请设置基金或股票代码，用英文半角逗号隔开
 const cs=2; // 配色方案 -> 0:黑色调 1:白色调 2:自动切换色调
 // 设置区结束
 
@@ -94,7 +94,7 @@ async function createWidget() {
 function getDatext () {
 	let DF=new DateFormatter();
 	DF.dateFormat='M月d日'; 
-	let da=DF.string(CD)+sep+'周'+['日','一','二','三','四','五','六'][CD.getDay()];
+	let da=DF.string(CD)+' · 周'+['日','一','二','三','四','五','六'][CD.getDay()];
 	if (size) {da+=sep+lunar(D)+sep+'全年'+Math.floor(D/(365+ly)*100)+'%';}
 	return da;
 }
