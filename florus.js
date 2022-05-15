@@ -1,4 +1,4 @@
-;// florus.js v5.8 by Tingyu
+;// florus.js v5.8.1 by Tingyu
 
 // 设置区开始
 const lat=31.223502, lon=121.44532, // 用于显示天气的位置，lat为纬度，北正南负，lon为经度，东正西负
@@ -49,7 +49,7 @@ async function createWidget() {
 		}
 	}
 	// Funds
-	if (FF==1&&tt) {
+	if (FF==1&&(tt||size>1)) {
 		w.addSpacer(2);
 		const Fu=await getFunds(Fcodes);
 		for (let o of Fu) {
@@ -59,7 +59,7 @@ async function createWidget() {
 		}
 	}
 	// Stock
-	else if (FF==2&&tt) {
+	else if (FF==2&&(tt||size>1)) {
 		w.addSpacer(2);
 		const St=await getStocks(Fcodes), l=St.length;
 		if (size==1&&l>3) {
