@@ -1,4 +1,4 @@
-;// florus.js v5.8.2 by Tingyu
+;// florus.js v5.9 by Tingyu
 
 // 设置区开始
 const lat=31.223502, lon=121.44532, // 用于显示天气的位置，lat为纬度，北正南负，lon为经度，东正西负
@@ -10,7 +10,7 @@ Events=[
 	['新年','2023-01-01'],
 ],
 FF=0, // 基金功能开关 -> 0:关闭（正常显示提醒事项） 1:基金模式 2:股票模式（中小尺寸在交易时段内用基金估值/股票行情替代提醒事项，大尺寸同时显示提醒事项和基金估值/股票行情）
-Fcodes='300750,002594,002241', // 请设置基金或股票代码，用英文半角逗号隔开
+Fcodes='300750,002594,z000001', // 请设置基金或股票代码（指数请在代码前加z），用英文半角逗号隔开
 cs=2; // 配色方案 -> 0:黑色调 1:白色调 2:自动切换色调
 // 设置区结束
 
@@ -191,7 +191,7 @@ async function getStocks (Fc) {
 	} catch (e) {St=[['暂时与交易所失去了联系',0]];}
 	return St;
 }
-function procStocks(x) {return x.split(/[, ]+/).map(s=>/(60[013]|688)\d{3}/.test(s)?'s_sh'+s:/(00[023]|300)\d{3}/.test(s)?'s_sz'+s:'').join(',');}
+function procStocks(x) {return x.split(/[, ]+/).map(s=>/(60[013]|688|z000)\d{3}/.test(s)?'s_sh'+s.replace(/\D/g,''):/(00[023]|300|z399)\d{3}/.test(s)?'s_sz'+s.replace(/\D/g,''):'').join(',');}
 async function getMotto () {
 	const req=new Request('https://v1.hitokoto.cn/?encode=json'), res=await req.loadJSON()||null;
 	return `“${res.hitokoto}” -- ${res.from}`;
