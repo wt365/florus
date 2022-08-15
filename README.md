@@ -1,17 +1,17 @@
 # Florus
 
-Florus is a piece of Javascript code applied to the *Scriptable* App, displaying date, lunar date, weekday, year progress, weather information, events reminder, funds valuation, stock quotes, as well as a random motto, via widget in iOS 14 or 15.
+Florus is a piece of Javascript code applied to the *Scriptable* App, displaying date, lunar date, weekday, year progress, weather information, events reminder, funds valuation, stock quotes, as well as a random motto, via widget in iOS 14, 15 or 16.
 
 ![](https://wt365.github.io/lib/florus/screenshot1.jpg)
 ![](https://wt365.github.io/lib/florus/screenshot2.jpg)
 
-Florus是一则应用于*Scriptable* App的Javascript脚本，它可以在iOS14或15小组件中实现：
+Florus是一则应用于*Scriptable* App的Javascript脚本，它可以在iOS14、15或16小组件中实现：
 
 * 显示日期、星期、农历、全年进度
 * 显示指定位置的天气状况、温度、三小时内降雨/降雪提醒
 * 显示日历中事项或自编事项的倒数天数
 * 显示指定基金的估值
-* 显示指定股票的行情
+* 显示指定股票（含指数）的行情
 * 从一言数据库中随机显示一句话及其出处
 * 支持小、中、大三种尺寸，不同尺寸下显示适合的内容容量
 * 支持黑色调与白色调两种配色方案，亦可自动切换
@@ -35,7 +35,7 @@ Florus是一则应用于*Scriptable* App的Javascript脚本，它可以在iOS14�
 * 金融功能开关 **FF**：可选值 0, 1, 2
 	* *FF=0* 时不开启金融功能（默认），将正常显示提醒事项。
 	* *FF=1* 时开启基金估值显示，请设置一组基金代码**Fcodes**。
-	* *FF=2* 时开启股票行情显示，请设置一组股票代码**Fcodes**。
+	* *FF=2* 时开启股票行情显示，请设置一组股票代码**Fcodes**。若为指数请在代码前加`z`，如 `z000001, z399006` 。
 	* 金融功能开启（FF=1或FF=2）时：中、小尺寸下交易时段内将不显示提醒事项，中尺寸显示最多6项基金估值/股票行情，小尺寸显示最多4项基金估值/股票行情；大尺寸下任何时段内均将显示最多6项提醒事项和最多6项基金估值/股票行情。
 * 配色方案 **cs**：可选值 0, 1, 2
 	* *cs=0* 时为黑色调。
