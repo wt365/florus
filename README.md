@@ -48,7 +48,7 @@ Florus是一则应用于*Scriptable* App的Javascript脚本，它可以在iOS14�
 ### 注意事项
 
 * 作者机型为iPhone 12，其他设备可自行适当调整字号大小。
-* 农历已支持到2023年底，2024年前会再更新。
+* 农历已支持到2024年底，2025年前会再更新。
 * 作者比较懒，更多好玩的功能我想到了再慢慢加……
 
 *designed and coded with love by Tingyu.*
