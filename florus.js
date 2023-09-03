@@ -1,12 +1,12 @@
-;// florus.js v6.1 by Tingyu
+;// florus.js v6.2 by Tingyu
 
 // 设置区开始
 const lat = 31.223502, lon = 121.44532, // 用于显示天气的位置，lat为纬度，北正南负，lon为经度，东正西负
 EM = 0, // 提醒事项模式 -> 0:自编提醒事项 1:从日历中读取事项（需授权）
 Events = [
 	// 自编提醒事项，可按样例格式添加任意多条，无需按时间顺序，将会自动排序，并根据不同尺寸，显示未来最近几项
-	['国庆', '2023-10-01'],
 	['亚运会', '2023-09-23'],
+	['国庆', '2023-10-01'],
 	['新年', '2024-01-01'],
 ],
 FF = 0, // 基金功能开关 -> 0:关闭（正常显示提醒事项） 1:基金模式 2:股票模式（中小尺寸、锁屏矩形尺寸在交易时段内用基金估值/股票行情替代提醒事项，大尺寸同时显示提醒事项和基金估值/股票行情）
@@ -16,11 +16,11 @@ cs = 2; // 配色方案 -> 0:黑色调 1:白色调 2:自动切换色调
 
 const CD = new Date(), tz = CD.getTimezoneOffset(), wd = CD.getDay(), dm = CD.getHours() * 100 + CD.getMinutes(), ly = CD.getFullYear() % 4 ? 0 : 1, D = getD(), loc = lat + ',' + lon, ST = getST(), tt = wd > 0 && wd < 6 && (dm > 910 && dm < 1135 || dm > 1255 && dm < 1505), size = getSize(), CS = [{b: '#1d1d1d', d: '#fff', w: '#fff59d', e: '#b3e5fc', f: ['#b3e5fc', '#ffccbc', '#c8e6c9'], m: '#fff'}, {b: '#f9f9f9', d: '#1d1d1d', w: '#353535', e: '#4778a9', f: ['#4778a9', '#ff5722', '#4caf50'], m: '#424242'}];
 CS.push(dm > ST[0] - 1 && dm < ST[1] ? CS[1] : CS[0]);
-const yo = await createWidget();
-Script.setWidget(yo);
+const alen = await createWidget();
+Script.setWidget(alen);
 Script.complete();
 // Functions
-function getD () {const a = new Date(CD.getFullYear(), CD.getMonth(), CD.getDate()), b = new Date(CD.getFullYear(),0,0); return (a - b) / 86400000;}
+function getD () {const a = new Date(Date.UTC(CD.getFullYear(), CD.getMonth(), CD.getDate())), b = new Date(Date.UTC(CD.getFullYear(), 0, 0)); return (a - b) / 86400000;}
 function getST () {
 	const fi = Math.asin(Math.sin((D - ly - 80) * 2 * Math.PI / (ly + 365)) * 0.397682), th = Math.asin(Math.tan(lat * Math.PI / 180) * Math.tan(fi)), a = th * 12 / Math.PI, b = (lon + tz / 4) / 15;
 	return [Math.trunc(6 - a - b) * 100 + Math.round((6 - a - b) % 1 * 60), Math.trunc(18 + a - b) * 100 + Math.round((18 + a - b) % 1 * 60)];
