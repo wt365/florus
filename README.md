@@ -1,6 +1,6 @@
 # Florus
 
-Florus is a piece of Javascript code applied to the *Scriptable* App, displaying date, lunar date, weekday, year progress, weather information, events reminder, funds valuation, stock quotes, as well as a random motto, via widget in iOS 14, 15 or 16.
+Florus is a piece of Javascript code applied to the *Scriptable* App, displaying date, lunar date, weekday, year progress, weather information, events reminder, funds valuation, stock quotes, as well as a random motto, via widget in iOS 14, 15, 16 or 17.
 
 ![](https://wt365.github.io/lib/florus/screenshot1.jpg)
 ![](https://wt365.github.io/lib/florus/screenshot2.jpg)
