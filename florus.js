@@ -1,29 +1,33 @@
-;// florus.js v6.2.1 by Tingyu
+;// florus.js v7.0 by Tingyu
 
 // 设置区开始
-const lat = 31.223502, lon = 121.44532, // 用于显示天气的位置，lat为纬度，北正南负，lon为经度，东正西负
-EM = 0, // 提醒事项模式 -> 0:自编提醒事项 1:从日历中读取事项（需授权）
+const loc = 'Shanghai', // 指定位置名称，用于显示天气，如'Chengdu'或'Hangzhou'或'Paris'，空格使用+号，如'Los+Angeles'
+EM = 0, // 提醒事项模式 => 0:自编提醒事项 1:从日历中读取事项（需授权）
 Events = [
 	// 自编提醒事项，可按样例格式添加任意多条，无需按时间顺序，将会自动排序，并根据不同尺寸，显示未来最近几项
-	['新年', '2024-01-01'],
 	['春节', '2024-02-10'],
 	['奥运会', '2024-07-26'],
+	['国庆', '2024-10-01'],
 ],
-FF = 0, // 基金功能开关 -> 0:关闭（正常显示提醒事项） 1:基金模式 2:股票模式（中小尺寸、锁屏矩形尺寸在交易时段内用基金估值/股票行情替代提醒事项，大尺寸同时显示提醒事项和基金估值/股票行情）
-Fcodes = '300750,002594,z000001', // 请设置基金或股票代码（指数请在代码前加z），用英文半角逗号隔开
-cs = 2; // 配色方案 -> 0:黑色调 1:白色调 2:自动切换色调
+FF = 0, // 基金功能开关 => 0:关闭（正常显示提醒事项） 1:基金模式 2:股票模式（中小尺寸、锁屏矩形尺寸在交易时段内用基金估值/股票行情替代提醒事项，大尺寸同时显示提醒事项和基金估值/股票行情）
+Fcodes = '300750, 002594, z000001', // 请设置基金或股票代码（指数请在代码前加z），用英文半角逗号隔开
+cs = 2; // 配色方案 => 0:黑色调 1:白色调 2:自动切换色调
 // 设置区结束
 
-const CD = new Date(), tz = CD.getTimezoneOffset(), wd = CD.getDay(), dm = CD.getHours() * 100 + CD.getMinutes(), ly = CD.getFullYear() % 4 ? 0 : 1, D = getD(), loc = lat + ',' + lon, ST = getST(), tt = wd > 0 && wd < 6 && (dm > 910 && dm < 1135 || dm > 1255 && dm < 1505), size = getSize(), CS = [{b: '#1d1d1d', d: '#fff', w: '#fff59d', e: '#b3e5fc', f: ['#b3e5fc', '#ffccbc', '#c8e6c9'], m: '#fff'}, {b: '#f9f9f9', d: '#1d1d1d', w: '#353535', e: '#4778a9', f: ['#4778a9', '#ff5722', '#4caf50'], m: '#424242'}];
+const CD = new Date(), tz = CD.getTimezoneOffset(), wd = CD.getDay(), dm = CD.getHours() * 100 + CD.getMinutes(), ly = CD.getFullYear() % 4 ? 0 : 1, D = getD(), ST = getST(), tt = wd > 0 && wd < 6 && (dm > 910 && dm < 1135 || dm > 1255 && dm < 1505), size = getSize(), CS = [{b: '#1d1d1d', d: '#fff', w: '#fff59d', e: '#b3e5fc', f: ['#b3e5fc', '#ffccbc', '#c8e6c9'], m: '#fff'}, {b: '#f9f9f9', d: '#1d1d1d', w: '#353535', e: '#4778a9', f: ['#4778a9', '#ff5722', '#4caf50'], m: '#424242'}];
 CS.push(dm > ST[0] - 1 && dm < ST[1] ? CS[1] : CS[0]);
-const alen = await createWidget();
-Script.setWidget(alen);
+const jessie = await createWidget();
+Script.setWidget(jessie);
 Script.complete();
 // Functions
 function getD () {const a = new Date(Date.UTC(CD.getFullYear(), CD.getMonth(), CD.getDate())), b = new Date(Date.UTC(CD.getFullYear(), 0, 0)); return (a - b) / 86400000;}
 function getST () {
-	const fi = Math.asin(Math.sin((D - ly - 80) * 2 * Math.PI / (ly + 365)) * 0.397682), th = Math.asin(Math.tan(lat * Math.PI / 180) * Math.tan(fi)), a = th * 12 / Math.PI, b = (lon + tz / 4) / 15;
-	return [Math.trunc(6 - a - b) * 100 + Math.round((6 - a - b) % 1 * 60), Math.trunc(18 + a - b) * 100 + Math.round((18 + a - b) % 1 * 60)];
+	const a = 20 / 31, b = 2 / 3, c = 60 / 89;
+	if (D > 355 + ly) {return [500 + (D - 356) * c | 0, 1859 - (D - 356) * c | 0];}
+	else if (D > 265 + ly) {return [559 - (D - 266) * b | 0, 1800 + (D - 266) * b | 0];}
+	else if (D > 172 + ly) {return [659 - (D - 173) * a | 0, 1700 + (D - 173) * a | 0];}
+	else if (D > 79 + ly) {return [600 + (D - 80) * a | 0, 1759 - (D - 80) * a | 0];}
+	else {return [559 - (79 - D) * c | 0, 1800 + (79 - D) * c | 0];}
 }
 function getSize () {return ({small: 0, medium: 1, large: 2, extraLarge: 3, accessoryRectangular: 4, accessoryInline: 5, accessoryCircular: 6})[config.widgetFamily] ?? 5;}
 async function createWidget() {
@@ -124,8 +128,8 @@ function getDates () {
 	return [DF.string(CD), `周${['日', '一', '二', '三', '四', '五', '六'][wd]}`, lunar(D), D / (365 + ly) * 100 | 0];
 }
 function lunar (D) {
-	// 农历已支持到2024年底，2025年之前我再更新一下
-	const y = CD.getFullYear(), L = {'2023': [-9, 21, 50, 80, 109, 138, 168, 198, 227, 257, 287, 316, 346], '2024': [-19, 10, 40, 69, 99, 128, 157, 187, 216, 246, 276, 305, 335, 365],}, Lx = {'2023': ['腊', '正', '二', '闰二', '三', '四', '五', '六', '七', '八', '九', '十', '冬'], '2024': ['冬', '腊', '正', '二', '三', '四', '五', '六', '七', '八', '九', '十', '冬', '腊'],};
+	// 农历已支持到2025年底，2026年之前我再更新一下
+	const y = CD.getFullYear(), L = {'2024': [-19, 10, 40, 69, 99, 128, 157, 187, 216, 246, 276, 305, 335, 365], '2025': [-1, 28, 58, 87, 117, 146, 175, 205, 234, 264, 293, 323, 353],}, Lx = {'2024': ['冬', '腊', '正', '二', '三', '四', '五', '六', '七', '八', '九', '十', '冬', '腊'], '2025': ['腊', '正', '二', '三', '四', '五', '六', '闰六', '七', '八', '九', '十', '冬'],};
 	let i = L[y].length - 1;
 	while (D < L[y][i] + 1) {i--;}
 	return Lx[y][i] + '月' + zh(D - L[y][i]);
@@ -205,7 +209,7 @@ async function getStocks (Fc) {
 	} catch (e) {St = [['暂时与交易所失去了联系', 0]];}
 	return St;
 }
-function procStocks(x) {return x.split(/[, ]+/).map(s => /(60[013]|688|z000)\d{3}/.test(s) ? 's_sh' + s.replace(/\D/g, '') : /(00[023]|300|z399)\d{3}/.test(s) ? 's_sz' + s.replace(/\D/g, '') : '').join(',');}
+function procStocks(x) {return x.split(/[, ]+/).map(s => /(60[0135]|688|z000)\d{3}/.test(s) ? 's_sh' + s.replace(/\D/g, '') : /(00[0-3]|30[01]|z399)\d{3}/.test(s) ? 's_sz' + s.replace(/\D/g, '') : /(4[023]0|8[2378]\d)\d{3}/.test(s) ? 's_bj' + s.replace(/\D/g, '') : '').join(',');}
 async function getMotto () {
 	const req = new Request('https://v1.hitokoto.cn/?encode=json'), res = await req.loadJSON() || null;
 	return `“${res.hitokoto}” -- ${res.from}`;
