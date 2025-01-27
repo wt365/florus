@@ -1,11 +1,11 @@
 # Florus
 
-Florus is a piece of Javascript code applied to the *Scriptable* App, displaying date, lunar date, weekday, year progress, weather information, events reminder, funds valuation, stock quotes, as well as a random motto, via widget in iOS 14, 15, 16 or 17.
+Florus is a piece of Javascript code applied to the *Scriptable* App, displaying date, lunar date, weekday, year progress, weather information, events reminder, funds valuation, stock quotes, as well as a random motto, via widget in iOS (14-18).
 
 ![](https://wt365.github.io/lib/florus/screenshot1.jpg)
 ![](https://wt365.github.io/lib/florus/screenshot2.jpg)
 
-Florus是一则应用于*Scriptable* App的Javascript脚本，它可以在iOS14、15、16或17小组件中实现：
+Florus是一则应用于*Scriptable* App的Javascript脚本，它可以在iOS(14-18)小组件中实现：
 
 * 显示日期、星期、农历、全年进度
 * 显示指定位置的天气状况、温度、三小时内降雨/降雪提醒
@@ -48,7 +48,7 @@ Florus是一则应用于*Scriptable* App的Javascript脚本，它可以在iOS14�
 ### 注意事项
 
 * 作者机型为iPhone 12，其他设备可自行适当调整字号大小。
-* 农历已支持到2025年底，2026年前会再更新。
+* 农历已支持到2027年底，2027年前会再更新。
 * 作者比较懒，更多好玩的功能我想到了再慢慢加……
 
 *designed and coded with love by Tingyu.*
